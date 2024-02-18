@@ -30,7 +30,7 @@ export const AppReducer = (state, action) => {
                     ...state
                 }
             }
-            case 'RED_EXPENSE':
+                case 'RED_EXPENSE':
                 const red_expenses = state.expenses.map((currentExp)=> {
                     if (currentExp.name === action.payload.name && currentExp.cost - action.payload.cost >= 0) {
                         currentExp.cost =  currentExp.cost - action.payload.cost;
@@ -65,6 +65,8 @@ export const AppReducer = (state, action) => {
                 ...state,
             };
         case 'CHG_CURRENCY':
+            console.log('CHG_CURRENCY'); //mwg inserted
+            console.log('Payload: ' + action.payload); //mwg inserted
             action.type = "DONE";
             state.currency = action.payload;
             return {
@@ -97,6 +99,11 @@ export const AppContext = createContext();
 export const AppProvider = (props) => {
     // 4. Sets up the app state. takes a reducer, and an initial state
     const [state, dispatch] = useReducer(AppReducer, initialState);
+    
+    const totalExpenses = state.expenses.reduce((total, item) => {
+        return total + item.cost;
+    }, 0);
+    
     let remaining = 0;
 
     if (state.expenses) {
@@ -112,6 +119,7 @@ export const AppProvider = (props) => {
                 expenses: state.expenses,
                 budget: state.budget,
                 remaining: remaining,
+                totalExpenses,
                 dispatch,
                 currency: state.currency
             }}
